@@ -13,7 +13,7 @@
   --purple: #b088e8;
   --yellow: #e8c56b;
   --red: #e86b6b;
-  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, "Courier New", monospace;
+  --font-mono: ui-monospace, Menlo, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --pad-x: clamp(16px, 4vw, 48px);
 }
 
