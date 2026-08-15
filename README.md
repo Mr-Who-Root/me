@@ -1,20 +1,24 @@
 # me
 
-A terminal-styled interactive portfolio, inspired by the Claude Code CLI. Type `/` to see
-available commands (`/about`, `/experience`, `/skills`, `/projects`, `/contact`, ...),
-autocomplete with `Tab`, browse history with `↑`/`↓`.
+A single-page portfolio: dark background, purple glow accent, bold display type, a
+click-to-enter intro, and scroll-triggered reveal animations — Hero → About → Skills →
+Work → Journey (experience + education + certifications) → Contact.
 
 ## How it works
 
 Pure static site — `index.html` + `style.css` + `app.js`, no build step, no framework.
-`app.js` fetches `data.json` at runtime and renders every command's output from it, so
-**editing `data.json` and pushing is enough to update the live site** — no rebuild required.
+`app.js` fetches `data.json` at runtime and renders every section from it, so **editing
+`data.json` and pushing is enough to update the live site** — no rebuild required.
 
 Sections are driven by `data.json`'s existing shape:
-- `personalInfo` → `/about`, `/contact`, `/socials`, `/whoami`
-- `experience`, `education`, `skills`, `projects` → matching commands
-- `customSections` (e.g. Certifications) → auto-registers a command per section, slugified
-  from its `title`
+- `personalInfo` → hero name/title, About summary, Contact
+- `experience`, `education` → Journey timeline
+- `skills` → Skills tag groups
+- `projects` → Work grid
+- `customSections` (e.g. Certifications) → rendered generically as badge cards under Journey
+
+A `#section` link (e.g. `…/#work`) skips the intro gate and jumps straight to that section
+— handy for sharing a direct link.
 
 ## Run locally
 

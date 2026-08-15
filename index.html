@@ -2,50 +2,100 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-<title>govind@portfolio — terminal</title>
-<meta name="description" content="Govind S R — Cyber Security Engineer. A terminal-styled interactive portfolio." />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#9646;</text></svg>" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Govind S R — Cyber Security Engineer</title>
+<meta name="description" content="Govind S R — Cyber Security Engineer. SOC, SOAR, threat intelligence and detection engineering." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%23a855f7%22>&#9670;</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
+<noscript><style>.gate{display:none}[data-reveal]{opacity:1!important;transform:none!important}body{overflow:auto!important;height:auto!important}</style></noscript>
 </head>
-<body>
-<div id="page">
+<body class="gate-active">
 
-  <div class="scrollback" id="scrollback">
-    <div class="output" id="output"></div>
+<div class="gate" id="gate">
+  <div class="gate-inner">
+    <div class="gate-brand">GOVIND<span>.SEC</span></div>
+    <button class="gate-btn" id="gate-btn" type="button">Click to enter</button>
+    <div class="gate-hint">or press enter</div>
   </div>
-
-  <div class="composer" id="composer">
-    <ul class="suggestions" id="suggestions" role="listbox" hidden></ul>
-
-    <div class="input-box">
-      <span class="chevron" aria-hidden="true">&gt;</span>
-      <div class="input-wrap">
-        <input
-          id="cmd-input"
-          type="text"
-          autocomplete="off"
-          autocapitalize="off"
-          autocorrect="off"
-          spellcheck="false"
-          aria-label="terminal command input"
-          placeholder="Type / for commands…"
-        />
-      </div>
-    </div>
-
-    <div class="status-line">
-      <span class="cwd">~/govind-portfolio</span>
-      <span class="status-hints">
-        <span><b>/</b> for commands</span>
-        <span><b>tab</b> to complete</span>
-        <span><b>&uarr;&darr;</b> for history</span>
-        <span><b>ctrl+l</b> to clear</span>
-      </span>
-    </div>
-  </div>
-
 </div>
+
+<nav class="nav" id="nav">
+  <a href="#top" class="nav-logo">GS<span>R</span></a>
+  <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+    <span></span>
+  </button>
+  <div class="nav-links" id="nav-links">
+    <a href="#about" data-nav>About</a>
+    <a href="#skills" data-nav>Skills</a>
+    <a href="#work" data-nav>Work</a>
+    <a href="#journey" data-nav>Journey</a>
+    <a href="#contact" data-nav class="nav-cta">Contact</a>
+  </div>
+</nav>
+
+<main>
+
+  <section class="hero" id="top">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">// Portfolio</p>
+      <h1 class="hero-title" id="hero-title" aria-label="Govind S R"></h1>
+      <p class="hero-role" id="hero-role"></p>
+    </div>
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track" id="marquee-track"></div>
+    </div>
+    <a href="#about" class="scroll-cue" aria-label="Scroll down"><span></span></a>
+  </section>
+
+  <section class="section about" id="about">
+    <div class="section-head" data-reveal>
+      <span class="section-idx">01</span>
+      <h2 class="section-title">About</h2>
+    </div>
+    <div class="about-grid" id="about-content"></div>
+  </section>
+
+  <section class="section skills" id="skills">
+    <div class="section-head" data-reveal>
+      <span class="section-idx">02</span>
+      <h2 class="section-title">Skills</h2>
+    </div>
+    <div class="skills-grid" id="skills-content"></div>
+  </section>
+
+  <section class="section work" id="work">
+    <div class="section-head" data-reveal>
+      <span class="section-idx">03</span>
+      <h2 class="section-title">Work</h2>
+    </div>
+    <div class="work-grid" id="work-content"></div>
+  </section>
+
+  <section class="section journey" id="journey">
+    <div class="section-head" data-reveal>
+      <span class="section-idx">04</span>
+      <h2 class="section-title">Journey</h2>
+    </div>
+    <div class="journey-list" id="journey-content"></div>
+    <div class="certs" id="certs-content"></div>
+  </section>
+
+  <section class="section contact" id="contact">
+    <div class="section-head" data-reveal>
+      <span class="section-idx">05</span>
+      <h2 class="section-title">Contact</h2>
+    </div>
+    <div class="contact-grid" id="contact-content"></div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p id="footer-text"></p>
+</footer>
 
 <script src="app.js"></script>
 </body>
