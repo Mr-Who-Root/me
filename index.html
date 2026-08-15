@@ -2,50 +2,179 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-<title>govind@portfolio — terminal</title>
-<meta name="description" content="Govind S R — Cyber Security Engineer. A terminal-styled interactive portfolio." />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#9646;</text></svg>" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Govind S R — Cyber-Sentry Portfolio</title>
+<meta name="description" content="Govind S R — Cyber Security Engineer. SOC, SOAR, threat intelligence and detection engineering." />
+<meta name="theme-color" content="#0a0a0c" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%2300f0ff%22>&#9670;</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
+<noscript><style>
+  #boot{display:none!important}
+  [data-reveal]{opacity:1!important;transform:none!important}
+</style></noscript>
 </head>
 <body>
-<div id="page">
 
-  <div class="scrollback" id="scrollback">
-    <div class="output" id="output"></div>
+<!-- boot sequence -->
+<div class="boot" id="boot" aria-hidden="true">
+  <div class="boot-inner">
+    <pre class="boot-log" id="boot-log"></pre>
+    <div class="boot-bar"><span id="boot-fill"></span></div>
   </div>
-
-  <div class="composer" id="composer">
-    <ul class="suggestions" id="suggestions" role="listbox" hidden></ul>
-
-    <div class="input-box">
-      <span class="chevron" aria-hidden="true">&gt;</span>
-      <div class="input-wrap">
-        <input
-          id="cmd-input"
-          type="text"
-          autocomplete="off"
-          autocapitalize="off"
-          autocorrect="off"
-          spellcheck="false"
-          aria-label="terminal command input"
-          placeholder="Type / for commands…"
-        />
-      </div>
-    </div>
-
-    <div class="status-line">
-      <span class="cwd">~/govind-portfolio</span>
-      <span class="status-hints">
-        <span><kbd>/</kbd>commands</span>
-        <span><kbd>Tab</kbd>autocomplete</span>
-        <span><kbd>&uarr;&darr;</kbd>history</span>
-        <span><kbd>Ctrl</kbd>+<kbd>L</kbd>clear</span>
-      </span>
-    </div>
-  </div>
-
 </div>
+
+<!-- custom HUD cursor (desktop only, injected by app.js) -->
+<div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursor-ring" aria-hidden="true">
+  <span class="cr-c cr-tl"></span><span class="cr-c cr-tr"></span>
+  <span class="cr-c cr-bl"></span><span class="cr-c cr-br"></span>
+  <span class="cr-label" id="cursor-label"></span>
+</div>
+
+<!-- fullscreen FX overlays -->
+<div class="fx-scanlines" aria-hidden="true"></div>
+<div class="fx-grid" aria-hidden="true"></div>
+<div class="fx-vignette" aria-hidden="true"></div>
+
+<header class="hud-top" id="hud-top">
+  <a href="#hero" class="brand" data-cursor="LINK">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-text" id="brand-text"></span>
+  </a>
+
+  <nav class="nav" id="nav">
+    <a href="#about" data-nav data-cursor="NAV">ABOUT</a>
+    <a href="#skills" data-nav data-cursor="NAV">SKILLS</a>
+    <a href="#projects" data-nav data-cursor="NAV">PROJECTS</a>
+    <a href="#experience" data-nav data-cursor="NAV">EXPERIENCE</a>
+    <a href="#certifications" data-nav data-cursor="NAV">CERTS</a>
+    <a href="#contact" data-nav data-cursor="NAV" class="nav-active-box">CONTACT</a>
+  </nav>
+
+  <div class="sys-status" aria-hidden="true">SYSTEM_STATUS: <span class="ok">ONLINE</span></div>
+
+  <button class="nav-burger" id="nav-burger" aria-label="Menu" aria-expanded="false" data-cursor="MENU">
+    <span></span>
+  </button>
+</header>
+
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="hero">
+    <div class="hero-grid">
+
+      <div class="hero-left">
+        <div class="chip" id="hero-chip"></div>
+
+        <h1 class="hero-name" id="hero-name" aria-label=""></h1>
+
+        <div class="hero-tagline">
+          <p id="hero-tagline"></p>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#projects" class="btn btn-yellow" data-cursor="EXEC">PROJECTS</a>
+          <a href="#contact" class="btn btn-cyan" data-cursor="EXEC">CONTACT</a>
+          <a href="#" class="btn btn-pink" id="btn-mail" data-cursor="EXEC">GET_IN_TOUCH</a>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="id-panel" id="id-panel">
+          <span class="br br-tl"></span><span class="br br-tr"></span>
+          <span class="br br-bl"></span><span class="br br-br"></span>
+          <div class="id-badge" id="id-badge"></div>
+          <div class="id-inner">
+            <div class="id-face" id="id-face"></div>
+            <div class="id-scan"></div>
+          </div>
+          <div class="id-meta">
+            <span>ID_SCAN: <b>MATCH</b></span>
+            <span id="id-clear">CLEARANCE: L4</span>
+          </div>
+          <div class="id-org" id="id-org"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section class="section" id="about">
+    <div class="ghost-word" aria-hidden="true">ABOUT</div>
+    <div class="sec-head" data-reveal>
+      <span class="sec-idx">// 01</span>
+      <h2 class="sec-title">ABOUT<span class="dot-pink">.</span></h2>
+    </div>
+    <div class="about-wrap" id="about-content"></div>
+  </section>
+
+  <!-- ============ SKILLS ============ -->
+  <section class="section" id="skills">
+    <div class="ghost-word" aria-hidden="true">SKILLS</div>
+    <div class="sec-head" data-reveal>
+      <span class="sec-idx">// 02</span>
+      <h2 class="sec-title">COMBAT_<span class="cyan">SKILLS</span></h2>
+    </div>
+    <div class="skills-wrap" id="skills-content"></div>
+  </section>
+
+  <!-- ============ PROJECTS ============ -->
+  <section class="section" id="projects">
+    <div class="ghost-word" aria-hidden="true">OPS</div>
+    <div class="sec-head" data-reveal>
+      <span class="sec-idx">// 03</span>
+      <h2 class="sec-title">FIELD_<span class="yellow">OPS</span></h2>
+    </div>
+    <div class="proj-wrap" id="projects-content"></div>
+  </section>
+
+  <!-- ============ EXPERIENCE ============ -->
+  <section class="section" id="experience">
+    <div class="ghost-word" aria-hidden="true">LOG</div>
+    <div class="sec-head" data-reveal>
+      <span class="sec-idx">// 04</span>
+      <h2 class="sec-title">SERVICE_<span class="pink">RECORD</span></h2>
+    </div>
+    <div class="exp-wrap" id="experience-content"></div>
+  </section>
+
+  <!-- ============ CERTIFICATIONS ============ -->
+  <section class="section" id="certifications">
+    <div class="ghost-word" aria-hidden="true">CERTS</div>
+    <div class="sec-head" data-reveal>
+      <span class="sec-idx">// 05</span>
+      <h2 class="sec-title">CRED<span class="cyan">ENTIALS</span></h2>
+    </div>
+    <div class="cert-wrap" id="certs-content"></div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="section" id="contact">
+    <div class="ghost-word" aria-hidden="true">LINK</div>
+    <div class="sec-head" data-reveal>
+      <span class="sec-idx">// 06</span>
+      <h2 class="sec-title">SECURE_<span class="cyan">CHANNEL</span></h2>
+    </div>
+    <div class="contact-wrap" id="contact-content"></div>
+  </section>
+
+</main>
+
+<!-- ============ HUD STATUS BAR ============ -->
+<footer class="hud-bottom" aria-hidden="true">
+  <span class="hb-item"><i class="led green"></i>AES-256</span>
+  <span class="hb-item hb-hide-sm"><i class="led"></i><span id="hb-ping">--MS</span></span>
+  <span class="hb-item">SYS_TIME: <span id="hb-clock">--:--:--</span></span>
+  <span class="hb-spacer"></span>
+  <span class="hb-item hb-hide-sm">STATUS: <b class="ok">OPERATIONAL</b></span>
+  <span class="hb-item hb-uptime"><span class="hb-lbl">SESSION_UPTIME: </span><span id="hb-uptime">00:00:00</span></span>
+  <span class="hb-item hb-hide-sm">KERNEL_PID: <span id="hb-pid" class="cyan">0000</span></span>
+</footer>
 
 <script src="app.js"></script>
 </body>
