@@ -2,6 +2,7 @@
   --bg: #0b0e14;
   --bg-raised: #12161f;
   --border: #262c3a;
+  --box-border: #4a3628;
   --text: #d8dee9;
   --text-dim: #6b7280;
   --text-bright: #f4f6fb;
@@ -12,7 +13,7 @@
   --purple: #b088e8;
   --yellow: #e8c56b;
   --red: #e86b6b;
-  --font-mono: "SF Mono", "JetBrains Mono", "Fira Code", ui-monospace, Menlo, Consolas, monospace;
+  --font-mono: "JetBrains Mono", "SF Mono", ui-monospace, Menlo, Consolas, "Courier New", monospace;
   --pad-x: clamp(16px, 4vw, 48px);
 }
 
@@ -56,21 +57,78 @@ body {
 
 .output { display: flex; flex-direction: column; gap: 2px; max-width: 980px; }
 
-/* ---- welcome box (Claude-Code style) ---- */
+/* ---- welcome box (CLI splash style) ---- */
 
 .welcome-box {
-  border: 1px solid var(--border);
+  border: 1px solid var(--box-border);
   border-radius: 8px;
-  padding: 14px 18px;
-  margin-bottom: 18px;
-  max-width: 620px;
+  margin-bottom: 20px;
+  max-width: 900px;
   background: var(--bg-raised);
   animation: fadein 0.3s ease;
+  overflow: hidden;
 }
-.welcome-box .wb-title { color: var(--accent); font-weight: 600; }
-.welcome-box .wb-title .glyph { margin-right: 6px; }
-.welcome-box p { margin: 6px 0 0; color: var(--text-dim); }
-.welcome-box p .ok { color: var(--green); }
+
+.wb-topbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 18px;
+  border-bottom: 1px solid var(--box-border);
+}
+.wb-topbar .wb-brand { color: var(--accent); font-weight: 600; white-space: nowrap; font-size: 13px; }
+.wb-topbar .wb-rule { flex: 1; height: 1px; background: var(--box-border); }
+
+.wb-body {
+  display: grid;
+  grid-template-columns: 250px 1fr;
+}
+
+.wb-left {
+  padding: 22px 18px;
+  border-right: 1px solid var(--box-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+}
+.wb-welcome { color: var(--text-bright); font-weight: 600; font-size: 14px; }
+.wb-icon { color: var(--accent); }
+.wb-icon svg { display: block; width: 52px; height: 52px; }
+.wb-meta { color: var(--text-dim); font-size: 12px; line-height: 1.7; }
+.wb-meta strong { color: var(--text); font-weight: 500; }
+
+.wb-right {
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+.wb-section h4 {
+  margin: 0 0 8px;
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+}
+.wb-section p, .wb-section div.wb-line {
+  margin: 3px 0;
+  color: var(--text);
+  font-size: 13px;
+}
+.wb-cmd-row { display: flex; gap: 10px; margin: 3px 0; font-size: 13px; }
+.wb-cmd-row .wb-cmd-name { color: var(--accent); min-width: 108px; flex-shrink: 0; }
+.wb-cmd-row .wb-cmd-desc { color: var(--text-dim); }
+.wb-divider { border: none; border-top: 1px solid var(--box-border); margin: 2px 0; }
+.wb-footer { color: var(--text-dim); font-style: italic; font-size: 12.5px; }
+
+@media (max-width: 640px) {
+  .wb-body { grid-template-columns: 1fr; }
+  .wb-left { border-right: none; border-bottom: 1px solid var(--box-border); padding: 18px; }
+  .wb-cmd-row { flex-direction: column; gap: 1px; }
+  .wb-cmd-row .wb-cmd-name { min-width: 0; }
+}
 
 /* ---- generic output blocks ---- */
 

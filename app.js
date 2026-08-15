@@ -154,12 +154,57 @@
 
   // ---------------- renderers ----------------
 
+  const SHIELD_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 2.5 L20 5.5 V11 C20 16 16.7 20 12 21.5 C7.3 20 4 16 4 11 V5.5 Z" />
+    <path d="M8.5 12 L11 14.5 L15.5 9" />
+  </svg>`;
+
+  function cmdDesc(name, fallback) {
+    const c = COMMANDS.find((x) => x.name === name);
+    return c ? c.desc : fallback;
+  }
+
   function renderBanner() {
     const p = DATA.personalInfo;
+    const latestJob = (DATA.experience || [])[0];
+
+    const featured = ["about", "experience", "skills", "projects", "contact"];
+    const cmdRows = featured
+      .filter((name) => COMMANDS.some((c) => c.name === name))
+      .map((name) => `<div class="wb-cmd-row"><span class="wb-cmd-name">/${esc(name)}</span><span class="wb-cmd-desc">${esc(cmdDesc(name, ""))}</span></div>`)
+      .join("");
+
     const wrap = el(`<div class="welcome-box">
-      <div class="wb-title"><span class="glyph">✳</span>${esc(p.name)} — ${esc(p.title)}</div>
-      <p>${esc(p.location)}</p>
-      <p>Type <span class="ok">/help</span> to see available commands</p>
+      <div class="wb-topbar">
+        <span class="wb-brand">${esc(p.name)}'s terminal</span>
+        <span class="wb-rule"></span>
+      </div>
+      <div class="wb-body">
+        <div class="wb-left">
+          <div class="wb-welcome">Welcome, I'm ${esc(p.name)}</div>
+          <div class="wb-icon">${SHIELD_ICON}</div>
+          <div class="wb-meta">
+            ${esc(p.title)}<br/>
+            <strong>${esc(p.email)}</strong><br/>
+            ${esc(p.location)}<br/>
+            ~/govind-portfolio
+          </div>
+        </div>
+        <div class="wb-right">
+          <div class="wb-section">
+            <h4>At a glance</h4>
+            <div class="wb-line">${esc(p.title)}</div>
+            ${latestJob ? `<div class="wb-line">Currently: ${esc(latestJob.position)} @ ${esc(latestJob.company)}</div>` : ""}
+            <div class="wb-line">${esc(p.location)}</div>
+          </div>
+          <hr class="wb-divider" />
+          <div class="wb-section">
+            <h4>Explore</h4>
+            ${cmdRows}
+            <div class="wb-footer">/help for the full list of commands</div>
+          </div>
+        </div>
+      </div>
     </div>`);
     output.appendChild(wrap);
     scrollToEnd();
