@@ -4,8 +4,7 @@
   const output = document.getElementById("output");
   const input = document.getElementById("cmd-input");
   const suggestionsEl = document.getElementById("suggestions");
-  const clockEl = document.getElementById("clock");
-  const body = document.getElementById("terminal-body");
+  const scrollback = document.getElementById("scrollback");
 
   let DATA = null;
   let history = [];
@@ -58,31 +57,22 @@
   }
 
   function scrollToEnd() {
-    body.scrollTop = body.scrollHeight;
+    scrollback.scrollTop = scrollback.scrollHeight;
   }
-
-  // ---------------- clock ----------------
-
-  function tickClock() {
-    const d = new Date();
-    clockEl.textContent = d.toLocaleTimeString("en-GB", { hour12: false });
-  }
-  tickClock();
-  setInterval(tickClock, 1000);
 
   // ---------------- thinking animation ----------------
 
   const THINK_VERBS = [
-    "Parsing", "Compiling", "Indexing", "Fetching", "Resolving",
-    "Decrypting", "Correlating", "Rendering", "Loading", "Grepping",
+    "Pondering", "Percolating", "Noodling", "Ruminating", "Synthesizing",
+    "Cogitating", "Simmering", "Puzzling", "Marinating", "Mulling",
   ];
-  const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
+  const SPINNER_FRAMES = ["✢", "✳", "✶", "✻", "✽"];
 
   function thinkingAnimation(label) {
     const row = el(`<div class="thinking-row">
       <span class="spinner">${SPINNER_FRAMES[0]}</span>
       <span class="thinking-verb">${esc(label)}…</span>
-      <span class="thinking-dim">(<span class="elapsed">0.0s</span>)</span>
+      <span class="thinking-dim">(<span class="elapsed">0s</span> · esc to skip)</span>
     </div>`);
     output.appendChild(row);
     scrollToEnd();
@@ -95,7 +85,7 @@
       frame = (frame + 1) % SPINNER_FRAMES.length;
       spinnerSpan.textContent = SPINNER_FRAMES[frame];
       elapsedSpan.textContent = ((performance.now() - start) / 1000).toFixed(1) + "s";
-    }, 80);
+    }, 120);
 
     return {
       stop() {
@@ -114,21 +104,29 @@
     const anim = thinkingAnimation(label);
     const delay = minMs + Math.random() * (maxMs - minMs);
     return new Promise((resolve) => {
-      setTimeout(() => {
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        document.removeEventListener("keydown", onEscape);
         anim.stop();
         fn();
         input.disabled = false;
         input.focus();
         scrollToEnd();
         resolve();
-      }, delay);
+      };
+      const onEscape = (e) => { if (e.key === "Escape") finish(); };
+      document.addEventListener("keydown", onEscape);
+      const timer = setTimeout(finish, delay);
     });
   }
 
   // ---------------- echo + printing ----------------
 
   function echoCommand(raw) {
-    const row = el(`<div class="echo-line"><span class="echo-prompt">govind@portfolio ~ $</span><span class="echo-cmd"></span></div>`);
+    const row = el(`<div class="echo-line"><span class="echo-prompt">&gt;</span><span class="echo-cmd"></span></div>`);
     row.querySelector(".echo-cmd").textContent = raw;
     output.appendChild(row);
     scrollToEnd();
@@ -158,17 +156,13 @@
 
   function renderBanner() {
     const p = DATA.personalInfo;
-    printBlock(`
-      <pre class="ascii">
-   ▄████  ▄████████    ▄████████ ▄█  ███▄▄▄▄
-  ███    ███   ███    ███    ███ ███ ███▀▀▀██▄
-  ███    ███   ███    ███    ███ ███ ███   ███
- ███████ ███   ███    ███    ███ ███ ███   ███
-  ███    ▀███████████ ▀███████▀ █▀   ███   ███
-      </pre>
-      <p><strong>${esc(p.name)}</strong> — <em>${esc(p.title)}</em></p>
-      <p class="dim">${esc(p.location)} · type <span class="ok">/help</span> to see available commands</p>
-    `);
+    const wrap = el(`<div class="welcome-box">
+      <div class="wb-title"><span class="glyph">✳</span>${esc(p.name)} — ${esc(p.title)}</div>
+      <p>${esc(p.location)}</p>
+      <p>Type <span class="ok">/help</span> to see available commands</p>
+    </div>`);
+    output.appendChild(wrap);
+    scrollToEnd();
   }
 
   function renderHelp() {
