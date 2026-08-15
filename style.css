@@ -1,20 +1,24 @@
 :root {
-  --bg: #0b0e14;
-  --bg-raised: #12161f;
-  --border: #262c3a;
-  --box-border: #4a3628;
-  --text: #d8dee9;
-  --text-dim: #6b7280;
-  --text-bright: #f4f6fb;
+  /* Claude Code's restrained palette: orange accent, plain text, dim gray.
+     Terminals don't use many colors — resist adding more. */
+  --bg: #0d0d0d;
+  --text: #cfcfcf;
+  --text-bright: #ffffff;
+  --text-dim: #7d7d7d;
   --accent: #d97757;
-  --accent-dim: #a85c43;
-  --green: #6bcf7f;
-  --cyan: #6bc9d9;
-  --purple: #b088e8;
-  --yellow: #e8c56b;
-  --red: #e86b6b;
-  --font-mono: ui-monospace, Menlo, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  --pad-x: clamp(16px, 4vw, 48px);
+  --accent-dim: #8a4f3a;
+  --border: #333333;
+  --green: #7ec87e;
+  --cyan: #6bb8c9;
+  --red: #e07a6b;
+
+  /* Menlo first: it is the classic macOS terminal face. ui-monospace picks up
+     SF Mono on newer macOS, Consolas covers Windows. */
+  --font-mono: Menlo, ui-monospace, "SF Mono", Monaco, Consolas,
+    "DejaVu Sans Mono", "Liberation Mono", monospace;
+
+  --pad-x: clamp(14px, 3vw, 32px);
+  --fs: 13.5px;
 }
 
 * { box-sizing: border-box; }
@@ -25,11 +29,10 @@ html, body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-mono);
-}
-
-body {
-  display: flex;
-  flex-direction: column;
+  /* One size for everything — a terminal has no "heading sizes". */
+  font-size: var(--fs);
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
 }
 
 #page {
@@ -40,207 +43,131 @@ body {
   width: 100%;
 }
 
-/* ---- scrollback (transcript) ---- */
+/* ---- scrollback ---- */
 
 .scrollback {
   flex: 1;
   overflow-y: auto;
-  padding: 22px var(--pad-x) 10px;
-  font-size: 14px;
-  line-height: 1.6;
+  padding: 18px var(--pad-x) 8px;
   scrollbar-width: thin;
   scrollbar-color: var(--border) transparent;
 }
-.scrollback::-webkit-scrollbar { width: 9px; }
-.scrollback::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
+.scrollback::-webkit-scrollbar { width: 8px; }
+.scrollback::-webkit-scrollbar-thumb { background: var(--border); }
 .scrollback::-webkit-scrollbar-track { background: transparent; }
 
-.output { display: flex; flex-direction: column; gap: 2px; max-width: 980px; }
+.output { max-width: 1000px; }
 
-/* ---- welcome box (CLI splash style) ---- */
+/* ---- welcome box: title sits inside the top border, like ╭─ Title ──╮ ---- */
 
 .welcome-box {
-  border: 1px solid var(--box-border);
-  border-radius: 8px;
-  margin-bottom: 20px;
+  position: relative;
+  border: 1px solid var(--accent-dim);
+  border-radius: 6px;
+  margin: 6px 0 20px;
   max-width: 900px;
-  background: var(--bg-raised);
-  animation: fadein 0.3s ease;
-  overflow: hidden;
+  background: transparent;
+  animation: fadein 0.25s ease;
 }
+.wb-legend {
+  position: absolute;
+  top: -0.72em;
+  left: 14px;
+  padding: 0 8px;
+  background: var(--bg);
+  color: var(--accent);
+}
+.wb-legend .dimver { color: var(--text-dim); }
 
-.wb-topbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 9px 18px;
-  border-bottom: 1px solid var(--box-border);
-}
-.wb-topbar .wb-brand { color: var(--accent); font-weight: 600; white-space: nowrap; font-size: 13px; }
-.wb-topbar .wb-rule { flex: 1; height: 1px; background: var(--box-border); }
-
-.wb-body {
-  display: grid;
-  grid-template-columns: 250px 1fr;
-}
+.wb-body { display: grid; grid-template-columns: 260px 1fr; }
 
 .wb-left {
-  padding: 22px 18px;
-  border-right: 1px solid var(--box-border);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  padding: 22px 16px 18px;
+  border-right: 1px solid var(--accent-dim);
   text-align: center;
-  gap: 12px;
 }
-.wb-welcome { color: var(--text-bright); font-weight: 600; font-size: 14px; }
-.wb-icon { color: var(--accent); }
-.wb-icon svg { display: block; width: 52px; height: 52px; }
-.wb-meta { color: var(--text-dim); font-size: 12px; line-height: 1.7; }
-.wb-meta strong { color: var(--text); font-weight: 500; }
+.wb-welcome { color: var(--text-bright); font-weight: 700; }
+.wb-icon { color: var(--accent); margin: 14px 0 12px; }
+.wb-icon svg { display: block; width: 46px; height: 46px; margin: 0 auto; }
+.wb-meta { color: var(--text-dim); }
+.wb-meta .strong { color: var(--text); }
 
-.wb-right {
-  padding: 18px 22px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  min-width: 0;
-}
-.wb-section h4 {
-  margin: 0 0 8px;
-  color: var(--accent);
-  font-size: 13px;
-  font-weight: 600;
-}
-.wb-section p, .wb-section div.wb-line {
-  margin: 3px 0;
-  color: var(--text);
-  font-size: 13px;
-}
-.wb-cmd-row { display: flex; gap: 10px; margin: 3px 0; font-size: 13px; }
-.wb-cmd-row .wb-cmd-name { color: var(--accent); min-width: 108px; flex-shrink: 0; }
-.wb-cmd-row .wb-cmd-desc { color: var(--text-dim); }
-.wb-divider { border: none; border-top: 1px solid var(--box-border); margin: 2px 0; }
-.wb-footer { color: var(--text-dim); font-style: italic; font-size: 12.5px; }
+.wb-right { padding: 16px 18px; min-width: 0; }
+.wb-group + .wb-group { margin-top: 14px; }
+.wb-group h4 { margin: 0 0 4px; font-size: inherit; font-weight: 700; color: var(--accent); }
+.wb-line { color: var(--text); }
+.wb-cmd { display: flex; gap: 12px; }
+.wb-cmd .k { color: var(--accent); min-width: 104px; flex-shrink: 0; }
+.wb-cmd .v { color: var(--text-dim); }
+.wb-foot { margin-top: 6px; color: var(--text-dim); font-style: italic; }
 
-@media (max-width: 640px) {
-  .wb-body { grid-template-columns: 1fr; }
-  .wb-left { border-right: none; border-bottom: 1px solid var(--box-border); padding: 18px; }
-  .wb-cmd-row { flex-direction: column; gap: 1px; }
-  .wb-cmd-row .wb-cmd-name { min-width: 0; }
-}
-
-/* ---- generic output blocks ---- */
+/* ---- transcript lines ---- */
 
 .line { white-space: pre-wrap; word-break: break-word; }
-.echo-line {
-  display: flex;
-  gap: 8px;
-  color: var(--text-bright);
-  margin-top: 16px;
-}
-.echo-line .echo-prompt { color: var(--accent-dim); flex-shrink: 0; }
-.echo-line .echo-cmd { color: var(--text-bright); }
 
-.block { margin: 6px 0 12px 0; animation: fadein 0.25s ease; }
-.block h2 {
-  margin: 0 0 8px 0;
-  font-size: 13px;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  border-bottom: 1px dashed var(--border);
-  padding-bottom: 6px;
-}
-.block h3 {
-  margin: 0 0 2px 0;
-  font-size: 14px;
-  color: var(--text-bright);
-}
-.block p { margin: 4px 0; color: var(--text); }
-.block .meta { color: var(--text-dim); font-size: 12.5px; margin-bottom: 6px; }
-.block .sub { color: var(--cyan); font-size: 13px; }
-.block ul { margin: 4px 0 4px 0; padding-left: 20px; }
-.block li { margin: 3px 0; }
-.block li::marker { color: var(--accent-dim); }
-.block strong { color: var(--yellow); font-weight: 600; }
-.block em { color: var(--cyan); font-style: normal; }
-.entry { margin-bottom: 16px; padding-left: 12px; border-left: 2px solid var(--border); }
-.entry:hover { border-left-color: var(--accent-dim); }
+.echo-line { display: flex; gap: 8px; margin-top: 14px; color: var(--text-bright); }
+.echo-line .echo-prompt { color: var(--text-dim); flex-shrink: 0; }
 
-.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.tag {
-  font-size: 11.5px;
-  padding: 2px 8px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  color: var(--purple);
-  background: rgba(176,136,232,0.06);
-}
+.block { margin: 2px 0 4px; animation: fadein 0.2s ease; }
 
-.skill-row { display: flex; gap: 10px; margin-bottom: 8px; flex-wrap: wrap; align-items: baseline; }
-.skill-cat { color: var(--accent); min-width: 190px; font-size: 13px; }
-.skill-list { color: var(--text); }
+/* Section header rendered as Claude Code's tool marker: ⏺ Experience */
+.sec-head { display: flex; gap: 8px; margin: 10px 0 4px; color: var(--text-bright); font-weight: 700; }
+.sec-head .dot { color: var(--accent); flex-shrink: 0; }
 
-.link { color: var(--cyan); text-decoration: none; border-bottom: 1px dotted var(--cyan); }
-.link:hover { color: var(--accent); border-bottom-color: var(--accent); }
+/* Tree rows: ⎿ prefix, mirroring nested CLI output */
+.tree { display: flex; gap: 8px; margin: 6px 0; }
+.tree .glyph { color: var(--text-dim); flex-shrink: 0; }
+.tree .body { min-width: 0; flex: 1; }
+.tree .body .t-title { color: var(--text-bright); }
+.tree .body .t-meta { color: var(--text-dim); }
+.tree .body p { margin: 2px 0; }
+.tree .body ul { margin: 3px 0; padding-left: 16px; list-style: none; }
+.tree .body li { margin: 2px 0; text-indent: -14px; padding-left: 14px; }
+.tree .body li::before { content: "• "; color: var(--accent-dim); }
+
+.kv { display: flex; gap: 12px; margin: 2px 0; }
+.kv .k { color: var(--text-dim); min-width: 116px; flex-shrink: 0; }
+.kv .v { min-width: 0; word-break: break-word; }
+
+.indent { padding-left: 18px; }
+
+.link { color: var(--cyan); text-decoration: none; }
+.link:hover { color: var(--accent); text-decoration: underline; }
 
 .dim { color: var(--text-dim); }
 .err { color: var(--red); }
 .ok { color: var(--green); }
-.warn { color: var(--yellow); }
+strong { color: var(--text-bright); font-weight: 700; }
+em { color: var(--text); font-style: italic; }
 
-table.dtable { border-collapse: collapse; margin-top: 4px; }
-table.dtable td { padding: 2px 10px 2px 0; vertical-align: top; }
-table.dtable td.k { color: var(--text-dim); }
-
-/* ---- thinking spinner (Claude Code style) ---- */
-.thinking-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--text-dim);
-  margin: 14px 0;
-  font-size: 13px;
-}
-.spinner {
-  display: inline-block;
-  width: 1.1em;
-  color: var(--accent);
-  font-weight: 600;
-}
-.thinking-verb { color: var(--text); }
+/* ---- thinking ---- */
+.thinking-row { display: flex; gap: 8px; margin: 10px 0; }
+.spinner { color: var(--accent); flex-shrink: 0; }
+.thinking-verb { color: var(--text-bright); }
 .thinking-dim { color: var(--text-dim); }
 
 @keyframes fadein {
-  from { opacity: 0; transform: translateY(2px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-/* ---- composer (fixed bottom input) ---- */
+/* ---- composer ---- */
 
-.composer {
-  flex-shrink: 0;
-  padding: 8px var(--pad-x) calc(10px + env(safe-area-inset-bottom));
-  border-top: 1px solid var(--border);
-  background: var(--bg);
-}
+.composer { flex-shrink: 0; padding: 4px var(--pad-x) calc(8px + env(safe-area-inset-bottom)); }
 
 .input-box {
   display: flex;
   align-items: center;
   gap: 10px;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 10px 14px;
-  background: var(--bg-raised);
-  transition: border-color 0.15s ease;
-  max-width: 980px;
+  border-radius: 6px;
+  padding: 8px 12px;
+  background: transparent;
+  max-width: 1000px;
 }
 .input-box:focus-within { border-color: var(--accent-dim); }
 
-.chevron { color: var(--accent); font-weight: 700; flex-shrink: 0; }
-
+.chevron { color: var(--accent); flex-shrink: 0; }
 .input-wrap { flex: 1; min-width: 0; }
 
 #cmd-input {
@@ -249,79 +176,56 @@ table.dtable td.k { color: var(--text-dim); }
   border: none;
   outline: none;
   color: var(--text-bright);
-  font-family: var(--font-mono);
-  font-size: 14px;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
   caret-color: var(--accent);
 }
 #cmd-input::placeholder { color: var(--text-dim); }
-#cmd-input:disabled { opacity: 0.5; }
+#cmd-input:disabled { opacity: 0.55; }
 
 .status-line {
   display: flex;
   justify-content: space-between;
-  align-items: center;
   gap: 12px;
-  margin-top: 7px;
-  max-width: 980px;
-  font-size: 11px;
+  margin-top: 5px;
+  max-width: 1000px;
   color: var(--text-dim);
+  font-size: 11.5px;
   flex-wrap: wrap;
 }
-.status-line .cwd { color: var(--text-dim); }
 .status-hints { display: flex; gap: 14px; flex-wrap: wrap; }
-.status-hints kbd {
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 3px;
-  padding: 0 4px;
-  font-size: 10px;
-  color: var(--text-dim);
-  margin-right: 3px;
-}
+.status-hints b { color: var(--text); font-weight: 400; }
 
-/* ---- suggestions dropdown (command palette) ---- */
+/* ---- slash palette: a plain list, not a floating web dropdown ---- */
 .suggestions {
   list-style: none;
-  margin: 0 0 8px 0;
-  padding: 4px;
-  background: var(--bg-raised);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  max-height: 40vh;
+  margin: 0 0 6px;
+  padding: 0;
+  max-height: 42vh;
   overflow-y: auto;
-  max-width: 980px;
+  max-width: 1000px;
 }
 .suggestions li {
   display: flex;
-  justify-content: space-between;
   gap: 12px;
-  padding: 7px 10px;
-  border-radius: 5px;
+  padding: 2px 12px;
   cursor: pointer;
-  font-size: 13px;
+  border-left: 2px solid transparent;
 }
-.suggestions li .cmd-name { color: var(--accent); }
-.suggestions li .cmd-desc { color: var(--text-dim); text-align: right; }
-.suggestions li.active { background: rgba(217,119,87,0.12); }
+.suggestions li .cmd-name { color: var(--accent); min-width: 128px; flex-shrink: 0; }
+.suggestions li .cmd-desc { color: var(--text-dim); }
+.suggestions li.active { background: rgba(217, 119, 87, 0.12); border-left-color: var(--accent); }
 .suggestions li.active .cmd-name { color: var(--text-bright); }
 
-@media (max-width: 640px) {
-  .scrollback { padding: 16px var(--pad-x) 6px; font-size: 13px; }
-  .skill-cat { min-width: 130px; }
-  .status-hints span:nth-child(3), .status-hints span:nth-child(4) { display: none; }
-  .welcome-box { max-width: 100%; }
-}
-
-.blink-cursor {
-  display: inline-block;
-  width: 8px;
-  height: 15px;
-  background: var(--accent);
-  margin-left: 2px;
-  vertical-align: text-bottom;
-  animation: blink 1s steps(1) infinite;
-}
-@keyframes blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
+@media (max-width: 700px) {
+  :root { --fs: 12.5px; }
+  .wb-body { grid-template-columns: 1fr; }
+  .wb-left { border-right: none; border-bottom: 1px solid var(--accent-dim); padding: 18px 14px 14px; }
+  .wb-cmd { gap: 8px; }
+  .wb-cmd .k { min-width: 92px; }
+  .kv { flex-direction: column; gap: 0; }
+  .kv .k { min-width: 0; }
+  .status-hints span:nth-child(n + 3) { display: none; }
+  .suggestions li .cmd-name { min-width: 100px; }
 }

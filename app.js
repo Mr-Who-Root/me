@@ -34,9 +34,11 @@
     let html = "";
     let inList = false;
     for (const line of lines) {
-      if (line.startsWith("- ")) {
+      // Bullets in data.json are inconsistent — "- foo" and "-foo" both occur.
+      const bullet = line.match(/^[-*]\s*(.+)$/);
+      if (bullet) {
         if (!inList) { html += "<ul>"; inList = true; }
-        html += `<li>${renderInline(line.slice(2))}</li>`;
+        html += `<li>${renderInline(bullet[1])}</li>`;
       } else {
         if (inList) { html += "</ul>"; inList = false; }
         html += `<p>${renderInline(line)}</p>`;
@@ -164,6 +166,16 @@
     return c ? c.desc : fallback;
   }
 
+  // CLI output primitives — every section is built from these three, so the
+  // transcript reads like one program's output rather than a styled document.
+  const secHead = (title) =>
+    `<div class="sec-head"><span class="dot">&#9679;</span><span>${esc(title)}</span></div>`;
+
+  const treeRow = (bodyHtml, glyph = "&#9500;&#9472;") =>
+    `<div class="tree"><span class="glyph">${glyph}</span><div class="body">${bodyHtml}</div></div>`;
+
+  const kvRow = (k, v) => `<div class="kv"><span class="k">${esc(k)}</span><span class="v">${v}</span></div>`;
+
   function renderBanner() {
     const p = DATA.personalInfo;
     const latestJob = (DATA.experience || [])[0];
@@ -171,37 +183,32 @@
     const featured = ["about", "experience", "skills", "projects", "contact"];
     const cmdRows = featured
       .filter((name) => COMMANDS.some((c) => c.name === name))
-      .map((name) => `<div class="wb-cmd-row"><span class="wb-cmd-name">/${esc(name)}</span><span class="wb-cmd-desc">${esc(cmdDesc(name, ""))}</span></div>`)
+      .map((name) => `<div class="wb-cmd"><span class="k">/${esc(name)}</span><span class="v">${esc(cmdDesc(name, ""))}</span></div>`)
       .join("");
 
     const wrap = el(`<div class="welcome-box">
-      <div class="wb-topbar">
-        <span class="wb-brand">${esc(p.name)}'s terminal</span>
-        <span class="wb-rule"></span>
-      </div>
+      <span class="wb-legend">${esc(p.name)} <span class="dimver">portfolio v1.0</span></span>
       <div class="wb-body">
         <div class="wb-left">
-          <div class="wb-welcome">Welcome, I'm ${esc(p.name)}</div>
+          <div class="wb-welcome">Welcome!</div>
           <div class="wb-icon">${SHIELD_ICON}</div>
           <div class="wb-meta">
             ${esc(p.title)}<br/>
-            <strong>${esc(p.email)}</strong><br/>
+            <span class="strong">${esc(p.email)}</span><br/>
             ${esc(p.location)}<br/>
             ~/govind-portfolio
           </div>
         </div>
         <div class="wb-right">
-          <div class="wb-section">
+          <div class="wb-group">
             <h4>At a glance</h4>
-            <div class="wb-line">${esc(p.title)}</div>
-            ${latestJob ? `<div class="wb-line">Currently: ${esc(latestJob.position)} @ ${esc(latestJob.company)}</div>` : ""}
-            <div class="wb-line">${esc(p.location)}</div>
+            ${latestJob ? `<div class="wb-line">${esc(latestJob.position)} at ${esc(latestJob.company)} &middot; ${esc(latestJob.startDate)}&ndash;${esc(latestJob.endDate)}</div>` : ""}
+            <div class="wb-line">${esc((DATA.experience || []).length)} roles &middot; ${esc((DATA.projects || []).length)} projects &middot; based in ${esc(p.location)}</div>
           </div>
-          <hr class="wb-divider" />
-          <div class="wb-section">
-            <h4>Explore</h4>
+          <div class="wb-group">
+            <h4>Getting started</h4>
             ${cmdRows}
-            <div class="wb-footer">/help for the full list of commands</div>
+            <div class="wb-foot">/help for the full list of commands</div>
           </div>
         </div>
       </div>
@@ -210,91 +217,80 @@
     scrollToEnd();
   }
 
+  // Last row of a list gets the closing elbow, like real tree output.
+  const glyphFor = (i, len) => (i === len - 1 ? "&#9584;&#9472;" : "&#9500;&#9472;");
+
   function renderHelp() {
-    let rows = COMMANDS
-      .filter((c) => c.name !== "clear")
-      .map((c) => `<tr><td class="k">/${esc(c.name)}</td><td>${esc(c.desc)}</td></tr>`)
+    const list = COMMANDS.filter((c) => c.name !== "clear");
+    const rows = list
+      .map((c, i) => treeRow(`<span class="t-title">/${esc(c.name)}</span> <span class="t-meta">&mdash; ${esc(c.desc)}</span>`, glyphFor(i, list.length)))
       .join("");
-    printBlock(`
-      <h2>Available commands</h2>
-      <table class="dtable">${rows}</table>
-      <p class="dim" style="margin-top:8px">Tip: press <strong>Tab</strong> to autocomplete, <strong>&uarr;/&darr;</strong> for history, <strong>Ctrl+L</strong> to clear.</p>
-    `);
+    printBlock(`${secHead(`Available commands (${list.length})`)}${rows}`);
   }
 
   function renderAbout() {
     const p = DATA.personalInfo;
     printBlock(`
-      <h2>About</h2>
-      <h3>${esc(p.name)}</h3>
-      <p class="sub">${esc(p.title)}</p>
-      <p class="meta">${esc(p.location)}</p>
-      <p>${renderInline(p.summary)}</p>
+      ${secHead("About")}
+      ${treeRow(`
+        <div class="t-title">${esc(p.name)}</div>
+        <div class="t-meta">${esc(p.title)} &middot; ${esc(p.location)}</div>
+        <p>${renderInline(p.summary)}</p>
+      `, "&#9584;&#9472;")}
     `);
   }
 
   function renderExperience() {
-    const items = DATA.experience.map((e) => `
-      <div class="entry">
-        <h3>${esc(e.position)}</h3>
-        <p class="sub">${esc(e.company)}</p>
-        <p class="meta">${esc(e.startDate)} — ${esc(e.endDate)} · ${esc(e.location)}</p>
-        ${renderMultiline(e.description)}
-      </div>
-    `).join("");
-    printBlock(`<h2>Experience</h2>${items}`);
+    const len = DATA.experience.length;
+    const items = DATA.experience.map((e, i) => treeRow(`
+      <div class="t-title">${esc(e.position)} &middot; ${esc(e.company)}</div>
+      <div class="t-meta">${esc(e.startDate)} &ndash; ${esc(e.endDate)} &middot; ${esc(e.location)}</div>
+      ${renderMultiline(e.description)}
+    `, glyphFor(i, len))).join("");
+    printBlock(`${secHead("Experience")}${items}`);
   }
 
   function renderEducation() {
-    const items = DATA.education.map((e) => `
-      <div class="entry">
-        <h3>${esc(e.degree)}${e.fieldOfStudy ? " — " + esc(e.fieldOfStudy) : ""}</h3>
-        <p class="sub">${esc(e.institution)}</p>
-        <p class="meta">${esc(e.startDate)} — ${esc(e.endDate)} · ${esc(e.location)}</p>
-        ${e.description ? `<p>${renderInline(e.description)}</p>` : ""}
-      </div>
-    `).join("");
-    printBlock(`<h2>Education</h2>${items}`);
+    const len = DATA.education.length;
+    const items = DATA.education.map((e, i) => treeRow(`
+      <div class="t-title">${esc(e.degree)}${e.fieldOfStudy ? " &middot; " + esc(e.fieldOfStudy) : ""}</div>
+      <div class="t-meta">${esc(e.institution)} &middot; ${esc(e.startDate)} &ndash; ${esc(e.endDate)} &middot; ${esc(e.location)}</div>
+      ${e.description ? `<p>${renderInline(e.description)}</p>` : ""}
+    `, glyphFor(i, len))).join("");
+    printBlock(`${secHead("Education")}${items}`);
   }
 
   function renderSkills() {
-    const rows = DATA.skills.map((s) => `
-      <div class="skill-row">
-        <span class="skill-cat">${esc(s.category)}</span>
-        <span class="skill-list">${esc(s.skills)}</span>
-      </div>
-    `).join("");
-    printBlock(`<h2>Skills</h2>${rows}`);
+    const rows = DATA.skills.map((s) => kvRow(s.category, esc(s.skills))).join("");
+    printBlock(`${secHead("Skills")}<div class="indent">${rows}</div>`);
   }
 
   function renderProjects() {
-    const items = DATA.projects.map((pr) => {
-      const tags = String(pr.technologies || "")
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean)
-        .map((t) => `<span class="tag">${esc(t)}</span>`)
-        .join("");
-      return `
-        <div class="entry">
-          <h3>${esc(pr.name)}</h3>
-          <p>${renderInline(pr.description)}</p>
-          <div class="tag-row">${tags}</div>
-          ${pr.link ? `<p><a class="link" href="${esc(pr.link)}" target="_blank" rel="noopener">${esc(pr.link)}</a></p>` : ""}
-        </div>
-      `;
+    const len = DATA.projects.length;
+    const items = DATA.projects.map((pr, i) => {
+      const tech = String(pr.technologies || "").split(",").map((t) => t.trim()).filter(Boolean).join(", ");
+      return treeRow(`
+        <div class="t-title">${esc(pr.name)}</div>
+        <p>${renderInline(pr.description)}</p>
+        ${tech ? `<div class="t-meta">stack: ${esc(tech)}</div>` : ""}
+        ${pr.link ? `<div><a class="link" href="${esc(pr.link)}" target="_blank" rel="noopener">${esc(pr.link)}</a></div>` : ""}
+      `, glyphFor(i, len));
     }).join("");
-    printBlock(`<h2>Projects</h2>${items}`);
+    printBlock(`${secHead("Projects")}${items}`);
   }
 
   function renderCustomSection(section) {
-    const rows = section.items.map((item) => {
-      const cells = section.fields
-        .map((f) => `<td>${esc(item[f.name] ?? "")}</td>`)
-        .join("<td class=\"dim\"> — </td>");
-      return `<tr>${cells}</tr>`;
+    const len = section.items.length;
+    const items = section.items.map((item, i) => {
+      const [first, ...rest] = section.fields;
+      const title = first ? esc(item[first.name] ?? "") : "";
+      const meta = rest.map((f) => esc(item[f.name] ?? "")).filter(Boolean).join(" &middot; ");
+      return treeRow(
+        `<span class="t-title">${title}</span>${meta ? ` <span class="t-meta">&mdash; ${meta}</span>` : ""}`,
+        glyphFor(i, len)
+      );
     }).join("");
-    printBlock(`<h2>${esc(section.title)}</h2><table class="dtable">${rows}</table>`);
+    printBlock(`${secHead(section.title)}${items}`);
   }
 
   function socialUrl(platform, username) {
@@ -309,16 +305,16 @@
     const p = DATA.personalInfo;
     const socials = (p.socialLinks || []).map((s) => {
       const url = socialUrl(s.platform, s.username);
-      return `<tr><td class="k">${esc(s.platform)}</td><td><a class="link" href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a></td></tr>`;
+      return kvRow(s.platform, `<a class="link" href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a>`);
     }).join("");
     printBlock(`
-      <h2>Contact</h2>
-      <table class="dtable">
-        <tr><td class="k">email</td><td><a class="link" href="mailto:${esc(p.email)}">${esc(p.email)}</a></td></tr>
-        ${p.phone ? `<tr><td class="k">phone</td><td>${esc(p.phone)}</td></tr>` : ""}
-        <tr><td class="k">location</td><td>${esc(p.location)}</td></tr>
+      ${secHead("Contact")}
+      <div class="indent">
+        ${kvRow("email", `<a class="link" href="mailto:${esc(p.email)}">${esc(p.email)}</a>`)}
+        ${p.phone ? kvRow("phone", esc(p.phone)) : ""}
+        ${kvRow("location", esc(p.location))}
         ${socials}
-      </table>
+      </div>
     `);
   }
 
@@ -326,23 +322,23 @@
     const p = DATA.personalInfo;
     const rows = (p.socialLinks || []).map((s) => {
       const url = socialUrl(s.platform, s.username);
-      return `<li>${esc(s.platform)}: <a class="link" href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a></li>`;
+      return kvRow(s.platform, `<a class="link" href="${esc(url)}" target="_blank" rel="noopener">${esc(url)}</a>`);
     }).join("");
-    printBlock(`<h2>Socials</h2><ul>${rows}</ul>`);
+    printBlock(`${secHead("Socials")}<div class="indent">${rows}</div>`);
   }
 
   function renderWhoami() {
     const p = DATA.personalInfo;
-    printLine(`<span class="ok">${esc(p.name)}</span> <span class="dim">·</span> ${esc(p.title)}`);
+    printLine(`${esc(p.name)} <span class="dim">&mdash; ${esc(p.title)}</span>`);
   }
 
   function renderLs() {
     const names = COMMANDS.filter((c) => c.name !== "clear").map((c) => c.name);
-    printLine(names.map((n) => `<span class="ok">/${esc(n)}</span>`).join("  "));
+    printLine(names.map((n) => `<span class="ok">${esc(n)}</span>`).join("&nbsp;&nbsp;"));
   }
 
   function renderSudo() {
-    printLine(`<span class="err">Permission denied: nice try. This terminal runs as user "govind" only.</span>`);
+    printLine(`<span class="err">govind is not in the sudoers file. This incident has been reported.</span>`);
   }
 
   function clearScreen() {
@@ -534,6 +530,10 @@
     await runWithThinking("Booting portfolio shell", () => {
       renderBanner();
     }, 500, 900);
+
+    // Deep link: /#projects opens straight to that section.
+    const hash = location.hash.replace(/^#/, "");
+    if (hash && findCommand(hash)) await execute("/" + hash.toLowerCase());
   }
 
   fetch("data.json")
