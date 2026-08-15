@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<title>govind@portfolio — terminal</title>
+<meta name="description" content="Govind S R — Cyber Security Engineer. A terminal-styled interactive portfolio." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>&#9646;</text></svg>" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<div class="crt-overlay" aria-hidden="true"></div>
+
+<div class="terminal-window" id="terminal-window">
+  <div class="title-bar">
+    <div class="traffic-lights" aria-hidden="true">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+    </div>
+    <div class="title-text">govind@portfolio: ~</div>
+    <div class="title-status" id="clock">--:--:--</div>
+  </div>
+
+  <div class="terminal-body" id="terminal-body">
+    <div class="output" id="output"></div>
+
+    <div class="input-row" id="input-row">
+      <span class="prompt">
+        <span class="prompt-user">govind</span><span class="prompt-at">@</span><span class="prompt-host">portfolio</span><span class="prompt-sep">:</span><span class="prompt-path">~</span><span class="prompt-dollar">$</span>
+      </span>
+      <div class="input-wrap">
+        <input
+          id="cmd-input"
+          type="text"
+          autocomplete="off"
+          autocapitalize="off"
+          autocorrect="off"
+          spellcheck="false"
+          aria-label="terminal command input"
+          placeholder="type / to see commands..."
+        />
+      </div>
+    </div>
+
+    <ul class="suggestions" id="suggestions" role="listbox" hidden></ul>
+  </div>
+</div>
+
+<div class="hint-bar">
+  <span><kbd>/</kbd> commands</span>
+  <span><kbd>Tab</kbd> autocomplete</span>
+  <span><kbd>&uarr;</kbd><kbd>&darr;</kbd> history</span>
+  <span><kbd>Ctrl</kbd>+<kbd>L</kbd> clear</span>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
