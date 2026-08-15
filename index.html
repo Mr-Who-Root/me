@@ -3,98 +3,177 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Govind S R — Cyber Security Engineer</title>
+<title>Govind S R — Cyber-Sentry Portfolio</title>
 <meta name="description" content="Govind S R — Cyber Security Engineer. SOC, SOAR, threat intelligence and detection engineering." />
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%23a855f7%22>&#9670;</text></svg>" />
+<meta name="theme-color" content="#0a0a0c" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%2300f0ff%22>&#9670;</text></svg>" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Syne:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="style.css" />
-<noscript><style>.gate{display:none}[data-reveal]{opacity:1!important;transform:none!important}body{overflow:auto!important;height:auto!important}</style></noscript>
+<noscript><style>
+  #boot{display:none!important}
+  [data-reveal]{opacity:1!important;transform:none!important}
+</style></noscript>
 </head>
-<body class="gate-active">
+<body>
 
-<div class="gate" id="gate">
-  <div class="gate-inner">
-    <div class="gate-brand">GOVIND<span>.SEC</span></div>
-    <button class="gate-btn" id="gate-btn" type="button">Click to enter</button>
-    <div class="gate-hint">or press enter</div>
+<!-- boot sequence -->
+<div class="boot" id="boot" aria-hidden="true">
+  <div class="boot-inner">
+    <pre class="boot-log" id="boot-log"></pre>
+    <div class="boot-bar"><span id="boot-fill"></span></div>
   </div>
 </div>
 
-<nav class="nav" id="nav">
-  <a href="#top" class="nav-logo">GS<span>R</span></a>
-  <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+<!-- custom HUD cursor (desktop only, injected by app.js) -->
+<div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursor-ring" aria-hidden="true">
+  <span class="cr-c cr-tl"></span><span class="cr-c cr-tr"></span>
+  <span class="cr-c cr-bl"></span><span class="cr-c cr-br"></span>
+  <span class="cr-label" id="cursor-label"></span>
+</div>
+
+<!-- fullscreen FX overlays -->
+<div class="fx-scanlines" aria-hidden="true"></div>
+<div class="fx-grid" aria-hidden="true"></div>
+<div class="fx-vignette" aria-hidden="true"></div>
+
+<header class="hud-top" id="hud-top">
+  <a href="#hero" class="brand" data-cursor="LINK">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <span class="brand-text" id="brand-text"></span>
+  </a>
+
+  <nav class="nav" id="nav">
+    <a href="#about" data-nav data-cursor="NAV">ABOUT</a>
+    <a href="#skills" data-nav data-cursor="NAV">SKILLS</a>
+    <a href="#projects" data-nav data-cursor="NAV">PROJECTS</a>
+    <a href="#experience" data-nav data-cursor="NAV">EXPERIENCE</a>
+    <a href="#certifications" data-nav data-cursor="NAV">CERTS</a>
+    <a href="#contact" data-nav data-cursor="NAV" class="nav-active-box">CONTACT</a>
+  </nav>
+
+  <div class="sys-status" aria-hidden="true">SYSTEM_STATUS: <span class="ok">ONLINE</span></div>
+
+  <button class="nav-burger" id="nav-burger" aria-label="Menu" aria-expanded="false" data-cursor="MENU">
     <span></span>
   </button>
-  <div class="nav-links" id="nav-links">
-    <a href="#about" data-nav>About</a>
-    <a href="#skills" data-nav>Skills</a>
-    <a href="#work" data-nav>Work</a>
-    <a href="#journey" data-nav>Journey</a>
-    <a href="#contact" data-nav class="nav-cta">Contact</a>
-  </div>
-</nav>
+</header>
 
 <main>
 
-  <section class="hero" id="top">
-    <div class="hero-inner">
-      <p class="hero-eyebrow">// Portfolio</p>
-      <h1 class="hero-title" id="hero-title" aria-label="Govind S R"></h1>
-      <p class="hero-role" id="hero-role"></p>
+  <!-- ============ HERO ============ -->
+  <section class="hero" id="hero">
+    <div class="hero-grid">
+
+      <div class="hero-left">
+        <div class="chip" id="hero-chip"></div>
+
+        <h1 class="hero-name" id="hero-name" aria-label=""></h1>
+
+        <div class="hero-tagline">
+          <p id="hero-tagline"></p>
+        </div>
+
+        <div class="hero-actions">
+          <a href="#projects" class="btn btn-yellow" data-cursor="EXEC">PROJECTS</a>
+          <a href="#contact" class="btn btn-cyan" data-cursor="EXEC">CONTACT</a>
+          <a href="#" class="btn btn-pink" id="btn-mail" data-cursor="EXEC">GET_IN_TOUCH</a>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <div class="id-panel" id="id-panel">
+          <span class="br br-tl"></span><span class="br br-tr"></span>
+          <span class="br br-bl"></span><span class="br br-br"></span>
+          <div class="id-badge" id="id-badge"></div>
+          <div class="id-inner">
+            <div class="id-face" id="id-face"></div>
+            <div class="id-scan"></div>
+          </div>
+          <div class="id-meta">
+            <span>ID_SCAN: <b>MATCH</b></span>
+            <span id="id-clear">CLEARANCE: L4</span>
+          </div>
+          <div class="id-org" id="id-org"></div>
+        </div>
+      </div>
+
     </div>
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee-track" id="marquee-track"></div>
-    </div>
-    <a href="#about" class="scroll-cue" aria-label="Scroll down"><span></span></a>
   </section>
 
-  <section class="section about" id="about">
-    <div class="section-head" data-reveal>
-      <span class="section-idx">01</span>
-      <h2 class="section-title">About</h2>
+  <!-- ============ ABOUT ============ -->
+  <section class="section" id="about">
+    <div class="ghost-word" aria-hidden="true">ABOUT</div>
+    <div class="sec-head" data-reveal>
+      <span class="sec-idx">// 01</span>
+      <h2 class="sec-title">ABOUT<span class="dot-pink">.</span></h2>
     </div>
-    <div class="about-grid" id="about-content"></div>
+    <div class="about-wrap" id="about-content"></div>
   </section>
 
-  <section class="section skills" id="skills">
-    <div class="section-head" data-reveal>
-      <span class="section-idx">02</span>
-      <h2 class="section-title">Skills</h2>
+  <!-- ============ SKILLS ============ -->
+  <section class="section" id="skills">
+    <div class="ghost-word" aria-hidden="true">SKILLS</div>
+    <div class="sec-head" data-reveal>
+      <span class="sec-idx">// 02</span>
+      <h2 class="sec-title">COMBAT_<span class="cyan">SKILLS</span></h2>
     </div>
-    <div class="skills-grid" id="skills-content"></div>
+    <div class="skills-wrap" id="skills-content"></div>
   </section>
 
-  <section class="section work" id="work">
-    <div class="section-head" data-reveal>
-      <span class="section-idx">03</span>
-      <h2 class="section-title">Work</h2>
+  <!-- ============ PROJECTS ============ -->
+  <section class="section" id="projects">
+    <div class="ghost-word" aria-hidden="true">OPS</div>
+    <div class="sec-head" data-reveal>
+      <span class="sec-idx">// 03</span>
+      <h2 class="sec-title">FIELD_<span class="yellow">OPS</span></h2>
     </div>
-    <div class="work-grid" id="work-content"></div>
+    <div class="proj-wrap" id="projects-content"></div>
   </section>
 
-  <section class="section journey" id="journey">
-    <div class="section-head" data-reveal>
-      <span class="section-idx">04</span>
-      <h2 class="section-title">Journey</h2>
+  <!-- ============ EXPERIENCE ============ -->
+  <section class="section" id="experience">
+    <div class="ghost-word" aria-hidden="true">LOG</div>
+    <div class="sec-head" data-reveal>
+      <span class="sec-idx">// 04</span>
+      <h2 class="sec-title">SERVICE_<span class="pink">RECORD</span></h2>
     </div>
-    <div class="journey-list" id="journey-content"></div>
-    <div class="certs" id="certs-content"></div>
+    <div class="exp-wrap" id="experience-content"></div>
   </section>
 
-  <section class="section contact" id="contact">
-    <div class="section-head" data-reveal>
-      <span class="section-idx">05</span>
-      <h2 class="section-title">Contact</h2>
+  <!-- ============ CERTIFICATIONS ============ -->
+  <section class="section" id="certifications">
+    <div class="ghost-word" aria-hidden="true">CERTS</div>
+    <div class="sec-head" data-reveal>
+      <span class="sec-idx">// 05</span>
+      <h2 class="sec-title">CRED<span class="cyan">ENTIALS</span></h2>
     </div>
-    <div class="contact-grid" id="contact-content"></div>
+    <div class="cert-wrap" id="certs-content"></div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section class="section" id="contact">
+    <div class="ghost-word" aria-hidden="true">LINK</div>
+    <div class="sec-head" data-reveal>
+      <span class="sec-idx">// 06</span>
+      <h2 class="sec-title">SECURE_<span class="cyan">CHANNEL</span></h2>
+    </div>
+    <div class="contact-wrap" id="contact-content"></div>
   </section>
 
 </main>
 
-<footer class="footer">
-  <p id="footer-text"></p>
+<!-- ============ HUD STATUS BAR ============ -->
+<footer class="hud-bottom" aria-hidden="true">
+  <span class="hb-item"><i class="led green"></i>AES-256</span>
+  <span class="hb-item hb-hide-sm"><i class="led"></i><span id="hb-ping">--MS</span></span>
+  <span class="hb-item">SYS_TIME: <span id="hb-clock">--:--:--</span></span>
+  <span class="hb-spacer"></span>
+  <span class="hb-item hb-hide-sm">STATUS: <b class="ok">OPERATIONAL</b></span>
+  <span class="hb-item hb-uptime"><span class="hb-lbl">SESSION_UPTIME: </span><span id="hb-uptime">00:00:00</span></span>
+  <span class="hb-item hb-hide-sm">KERNEL_PID: <span id="hb-pid" class="cyan">0000</span></span>
 </footer>
 
 <script src="app.js"></script>
