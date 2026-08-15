@@ -9,26 +9,17 @@
 <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<div class="crt-overlay" aria-hidden="true"></div>
+<div id="page">
 
-<div class="terminal-window" id="terminal-window">
-  <div class="title-bar">
-    <div class="traffic-lights" aria-hidden="true">
-      <span class="dot red"></span>
-      <span class="dot yellow"></span>
-      <span class="dot green"></span>
-    </div>
-    <div class="title-text">govind@portfolio: ~</div>
-    <div class="title-status" id="clock">--:--:--</div>
+  <div class="scrollback" id="scrollback">
+    <div class="output" id="output"></div>
   </div>
 
-  <div class="terminal-body" id="terminal-body">
-    <div class="output" id="output"></div>
+  <div class="composer" id="composer">
+    <ul class="suggestions" id="suggestions" role="listbox" hidden></ul>
 
-    <div class="input-row" id="input-row">
-      <span class="prompt">
-        <span class="prompt-user">govind</span><span class="prompt-at">@</span><span class="prompt-host">portfolio</span><span class="prompt-sep">:</span><span class="prompt-path">~</span><span class="prompt-dollar">$</span>
-      </span>
+    <div class="input-box">
+      <span class="chevron" aria-hidden="true">&gt;</span>
       <div class="input-wrap">
         <input
           id="cmd-input"
@@ -38,20 +29,22 @@
           autocorrect="off"
           spellcheck="false"
           aria-label="terminal command input"
-          placeholder="type / to see commands..."
+          placeholder="Type / for commands…"
         />
       </div>
     </div>
 
-    <ul class="suggestions" id="suggestions" role="listbox" hidden></ul>
+    <div class="status-line">
+      <span class="cwd">~/govind-portfolio</span>
+      <span class="status-hints">
+        <span><kbd>/</kbd>commands</span>
+        <span><kbd>Tab</kbd>autocomplete</span>
+        <span><kbd>&uarr;&darr;</kbd>history</span>
+        <span><kbd>Ctrl</kbd>+<kbd>L</kbd>clear</span>
+      </span>
+    </div>
   </div>
-</div>
 
-<div class="hint-bar">
-  <span><kbd>/</kbd> commands</span>
-  <span><kbd>Tab</kbd> autocomplete</span>
-  <span><kbd>&uarr;</kbd><kbd>&darr;</kbd> history</span>
-  <span><kbd>Ctrl</kbd>+<kbd>L</kbd> clear</span>
 </div>
 
 <script src="app.js"></script>
